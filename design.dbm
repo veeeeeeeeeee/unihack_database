@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.2-beta" last-position="205,132" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="uhm2016">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="users">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="937" y="436"/>
+	<column name="user_id" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="contact_details" not-null="true" default-value="'{}'">
+		<type name="jsonb"/>
+	</column>
+	<constraint name="users_pk_user_id" type="pk-constr" table="public.users">
+		<columns names="user_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="locations">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="536" y="507"/>
+	<column name="latitude" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="longitude" not-null="true">
+		<type name="double precision"/>
+	</column>
+	<column name="created" not-null="true">
+		<type name="timestamptz"/>
+	</column>
+</table>
+
+<relationship name="users_has_many_locations" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#42f7ec"
+	 src-table="public.users"
+	 dst-table="public.locations"
+	 src-required="true" dst-required="false"/>
+
+<table name="requests">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1244" y="523"/>
+	<column name="id" not-null="true">
+		<type name="uuid"/>
+	</column>
+	<column name="allowed">
+		<type name="boolean"/>
+	</column>
+	<column name="to" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="created" not-null="true">
+		<type name="timestamptz"/>
+	</column>
+	<constraint name="requests_id_pk" type="pk-constr" table="public.requests">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="from" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="users_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="users_has_many_requests" type="rel1n"
+	 src-col-pattern="from"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#317bde"
+	 src-table="public.users"
+	 dst-table="public.requests"
+	 src-required="true" dst-required="false"/>
+
+<constraint name="to_fk_users" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.users" table="public.requests">
+	<columns names="to" ref-type="src-columns"/>
+	<columns names="user_id" ref-type="dst-columns"/>
+</constraint>
+
+</dbmodel>
